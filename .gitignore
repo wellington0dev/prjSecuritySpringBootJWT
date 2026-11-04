@@ -1,0 +1,21 @@
+# Build
+target/
+bin/
+*.class
+*.log
+
+# IDE
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+.vscode/
+
+# Banco H2 local
+data/
+*.mv.db
+*.trace.db
+
+# Configuração local e segredos
+application.properties

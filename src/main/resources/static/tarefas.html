@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciar Tarefas do Projeto</title>
+
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background: #f5f5f5;
+	padding: 20px;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+header {
+	background: white;
+	padding: 1rem 2rem;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	margin-bottom: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.header-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+h1 {
+	color: #333;
+}
+
+.logout-btn {
+	background: #dc3545;
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.nav-btn {
+	background: #007bff;
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.card {
+	background: white;
+	padding: 2rem;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	margin-bottom: 2rem;
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-weight: bold;
+	color: #555;
+}
+
+input, select, textarea {
+	width: 100%;
+	padding: 0.75rem;
+	border: 2px solid #ddd;
+	border-radius: 5px;
+	font-size: 1rem;
+	font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+	outline: none;
+	border-color: #667eea;
+}
+
+textarea {
+	resize: vertical;
+	min-height: 80px;
+}
+
+button {
+	padding: 0.75rem 1.5rem;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1rem;
+}
+
+.btn-group {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.btn-primary {
+	background: #007bff;
+	color: white;
+}
+
+.btn-warning {
+	background: #ffc107;
+	color: black;
+}
+
+.btn-danger {
+	background: #dc3545;
+	color: white;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 1rem;
+}
+
+th, td {
+	padding: 1rem;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+th {
+	background: #f8f9fa;
+}
+
+.message {
+	padding: 1rem;
+	border-radius: 5px;
+	margin-bottom: 1rem;
+	display: none;
+}
+
+.success {
+	background: #d4edda;
+	color: #155724;
+}
+
+.error {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.hidden {
+	display: none;
+}
+
+.info {
+	color: #666;
+	margin-top: 0.5rem;
+}
+
+.vazio {
+	text-align: center;
+	color: #777;
+	font-style: italic;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<header>
+			<div class="header-top">
+				<h1>📋 Gerenciamento de Tarefas do Projeto</h1>
+				<div>
+					<button class="nav-btn" onclick="irParaDepartamentos()">Departamentos</button>
+					<button class="nav-btn" onclick="irParaEmpregados()">Empregados</button>
+					<button class="nav-btn" onclick="irParaProjetos()">Projetos</button>
+					<button class="logout-btn" onclick="logout()">Sair</button>
+				</div>
+			</div>
+			<div id="userInfo"></div>
+		</header>
+
+		<div id="message" class="message"></div>
+
+		<div class="card">
+			<h2>Projeto</h2>
+			<div class="form-group">
+				<label for="projeto">Selecione o projeto:</label>
+				<select id="projeto" onchange="trocarProjeto()"></select>
+				<div id="infoProjeto" class="info"></div>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>Adicionar/Editar Tarefa</h2>
+
+			<form id="tarefaForm">
+				<input type="hidden" id="numOrdemOriginal">
+
+				<div class="form-group">
+					<label for="numOrdem">Número de ordem:</label>
+					<input type="number" id="numOrdem" min="1" required>
+				</div>
+
+				<div class="form-group">
+					<label for="descricao">Descrição:</label>
+					<textarea id="descricao" maxlength="255" required></textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="empregado">Empregado responsável:</label>
+					<select id="empregado" required></select>
+				</div>
+
+				<div class="btn-group">
+					<button type="submit" class="btn-primary" id="btnSalvar">Salvar</button>
+					<button type="button" class="btn-warning hidden" onclick="limparForm()"
+						id="btnCancelar">Cancelar</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="card">
+			<h2>Tarefas do Projeto</h2>
+			<table id="tabelaTarefas">
+				<thead>
+					<tr>
+						<th>Nº Ordem</th>
+						<th>Descrição</th>
+						<th>Data Criação</th>
+						<th>Empregado</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script src="js/tarefas.js"></script>
+</body>
+</html>

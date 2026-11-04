@@ -1,0 +1,22 @@
+# Copie este arquivo para application.properties e ajuste os valores locais.
+
+# Banco H2 em arquivo
+spring.datasource.url=jdbc:h2:file:./data/testedb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# JPA
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.defer-datasource-initialization=true
+
+# Console H2
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JWT - substitua por uma chave forte com pelo menos 64 caracteres
+jwt.secret=altere-este-segredo-para-uma-chave-com-no-minimo-64-caracteres-de-comprimento-0123456789
+jwt.expiration=3600000
